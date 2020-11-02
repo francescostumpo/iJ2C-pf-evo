@@ -1,5 +1,6 @@
 package org.ij2c.evolution.controller;
 
+import org.bson.types.ObjectId;
 import org.ij2c.evolution.model.Client;
 import org.ij2c.evolution.service.ClientService;
 import org.ij2c.evolution.utils.Message;
@@ -29,6 +30,12 @@ public class ClientController {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(client, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteClient/{clientId}")
+    public ResponseEntity<Message> deleteClient(@PathVariable ObjectId clientId){
+        boolean success = clientService.deleteClient(clientId);
+        return Message.sendMessageResponseEntity(success);
     }
 
 

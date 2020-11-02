@@ -1,7 +1,10 @@
 package org.ij2c.evolution.model;
 
 import io.quarkus.mongodb.panache.MongoEntity;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
+
+import java.util.List;
 
 @MongoEntity(collection = "clients")
 public class Client {
@@ -52,6 +55,7 @@ public class Client {
         this.industry = industry;
     }
 
+
     @Override
     public String toString() {
         return "Client{" +
@@ -62,4 +66,6 @@ public class Client {
                 ", industry='" + industry + '\'' +
                 '}';
     }
+
+
 }

@@ -3,6 +3,7 @@ package org.ij2c.evolution.service;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.bson.types.ObjectId;
+import org.ij2c.evolution.model.Application;
 import org.ij2c.evolution.model.Question;
 import org.ij2c.evolution.model.Questionnaire;
 import org.ij2c.evolution.repository.QuestionRepository;
@@ -20,9 +21,12 @@ public class QuestionnaireService {
     @Inject
     QuestionRepository questionRepository;
 
+    @Inject
+    ApplicationService applicationService;
+
     public boolean createQuestionnaire(JsonObject jsonObject){
         Questionnaire questionnaire = new Questionnaire();
-        questionnaire.setClientId(jsonObject.getString("clientId"));
+        String applicationId = jsonObject.getString("applicationId");
         questionnaire.setQuestionAnswerList(jsonObject.getJsonArray("questionAnswerList").getList());
         JsonArray ja = jsonObject.getJsonArray("questionAnswerList");
         Double resultValue = calculateResultValue(ja);
@@ -30,8 +34,12 @@ public class QuestionnaireService {
         String resultClause = calculateResultClause(resultValue);
         questionnaire.setResultClause(resultClause);
 
-        boolean success = questionnaireRepository.createQuestionnaire(questionnaire);
-        return true;
+        ObjectId questionnaireId = questionnaireRepository.createQuestionnaire(questionnaire);
+        if(questionnaireId == null){
+            return false;
+        }
+        boolean success = applicationService.updateApplication(new ObjectId(applicationId), questionnaireId);
+        return success;
     }
 
     private String calculateResultClause(Double resultValue) {
@@ -60,5 +68,19 @@ public class QuestionnaireService {
 
         Double finalScore = questionsScore / totalWeight;
         return finalScore;
+    }
+
+    public boolean deleteQuestionnaire(ObjectId questionnaireId){
+        boolean success = questionnaireRepository.deleteQuestionnaire(questionnaireId);
+        return success;
+    }
+
+    public Questionnaire getQuestionnaireByApplicationId(ObjectId applicationId) {
+        Application application = applicationService.getApplicationById(applicationId);
+        if(application == null){
+            return null;
+        }
+        Questionnaire questionnaire = questionnaireRepository.getQuestionnaireOnMongo(application.getQuestionnaireId());
+        return questionnaire;
     }
 }

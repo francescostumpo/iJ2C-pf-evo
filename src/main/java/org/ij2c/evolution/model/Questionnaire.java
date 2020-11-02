@@ -10,7 +10,6 @@ import java.util.List;
 public class Questionnaire {
 
     private ObjectId id;
-    private String clientId;
     private List<QuestionAnswer> questionAnswerList;
     private double resultValue;
     private String resultClause;
@@ -23,13 +22,6 @@ public class Questionnaire {
         this.id = id;
     }
 
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
 
     public List<QuestionAnswer> getQuestionAnswerList() {
         return questionAnswerList;
@@ -59,7 +51,6 @@ public class Questionnaire {
     public String toString() {
         return "Questionnaire{" +
                 "id=" + id +
-                ", clientId='" + clientId + '\'' +
                 ", questionAnswerList=" + questionAnswerList +
                 ", resultValue=" + resultValue +
                 ", resultClause='" + resultClause + '\'' +

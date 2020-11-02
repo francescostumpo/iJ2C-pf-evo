@@ -2,13 +2,13 @@ package org.ij2c.evolution.controller;
 
 import net.sf.json.JSONObject;
 import io.vertx.core.json.JsonObject;
+import org.bson.types.ObjectId;
+import org.ij2c.evolution.model.Questionnaire;
 import org.ij2c.evolution.service.QuestionnaireService;
 import org.ij2c.evolution.utils.Message;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 
@@ -23,6 +23,23 @@ public class QuestionnaireController {
     public ResponseEntity<Message> insertQuestionnaire(@RequestBody JSONObject jo){
         JsonObject jsonObject = JsonObject.mapFrom(jo);
         boolean success = questionnaireService.createQuestionnaire(jsonObject);
+        return Message.sendMessageResponseEntity(success);
+    }
+
+    @GetMapping("/getQuestionnaireByApplicationId/{applicationId}")
+    public ResponseEntity<Questionnaire> getQuestionnaireByApplicationId(@PathVariable ObjectId applicationId){
+        Questionnaire questionnaire = questionnaireService.getQuestionnaireByApplicationId(applicationId);
+        if(questionnaire == null){
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        }else {
+            return new ResponseEntity<>(questionnaire, HttpStatus.OK);
+        }
+    }
+
+
+    @DeleteMapping("/deleteQuestionnaire/{questionnaireId}")
+    public ResponseEntity<Message> deleteQuestionnaire(@PathVariable ObjectId questionnaireId){
+        boolean success = questionnaireService.deleteQuestionnaire(questionnaireId);
         return Message.sendMessageResponseEntity(success);
     }
 }
