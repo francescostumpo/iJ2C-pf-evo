@@ -25,16 +25,15 @@ public class ApplicationController {
     @PostMapping("/insertApplication")
     public ResponseEntity<Message> insertApplication(@RequestBody Application application) {
 
-        System.out.println(application.toString());
         boolean success = applicationService.createApplication(application);
         return Message.sendMessageResponseEntity(success);
     }
 
     @GetMapping("/getApplicationsByClientId/{clientId}")
-    public ResponseEntity<List<Application>> getApplicationsByClientId(@PathVariable ObjectId clientId){
+    public ResponseEntity<Object> getApplicationsByClientId(@PathVariable ObjectId clientId){
         List<Application> applicationList = applicationService.getApplicationsByClientId(clientId);
         if(applicationList.isEmpty() || applicationList == null){
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(new JSONObject(), HttpStatus.OK);
         }else{
             return new ResponseEntity<>(applicationList, HttpStatus.OK);
         }
@@ -43,6 +42,12 @@ public class ApplicationController {
     @DeleteMapping("/deleteApplication/{applicationId}")
     public ResponseEntity<Message> deleteApplication(@PathVariable ObjectId applicationId){
         boolean success = applicationService.deleteApplication(applicationId);
+        return Message.sendMessageResponseEntity(success);
+    }
+
+    @PutMapping("/updateApplication")
+    public ResponseEntity<Message> updateApplication(@RequestBody Application application){
+        boolean success = applicationService.updateApplication(application);
         return Message.sendMessageResponseEntity(success);
     }
 }

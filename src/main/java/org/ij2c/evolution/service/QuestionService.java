@@ -33,4 +33,9 @@ public class QuestionService {
         List<Question> questionList = questionRepository.listAll(Sort.ascending("questionSequence"));
         return questionList;
     }
+
+    public boolean updateQuestion(Question question) {
+        boolean success = questionRepository.updateQuestion(question);
+        return success;
+    }
 }

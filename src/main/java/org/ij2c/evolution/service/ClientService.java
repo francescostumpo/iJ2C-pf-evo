@@ -19,6 +19,9 @@ public class ClientService {
     @Inject
     ApplicationService applicationService;
 
+    @Inject
+    QuestionnaireService questionnaireService;
+
     public boolean insertClientOnMongo(Client client){
 
         boolean inserted = clientRepository.createClient(client);
@@ -41,5 +44,10 @@ public class ClientService {
             return clientRepository.deleteClient(clientId);
         }
         return false;
+    }
+
+    public List<Client> getAllClients() {
+        List<Client> clientList = clientRepository.getAllClients();
+        return clientList;
     }
 }

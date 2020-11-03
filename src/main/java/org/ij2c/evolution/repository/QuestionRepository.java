@@ -38,4 +38,15 @@ public class QuestionRepository implements PanacheMongoRepository<Question> {
         return success;
     }
 
+    public boolean updateQuestion(Question question) {
+        boolean success = false;
+        try{
+            update(question);
+            success = true;
+        }catch (Exception e){
+            logger.error("Exception in deleting question with ID " + question.getId().toString() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        return success;
+    }
 }

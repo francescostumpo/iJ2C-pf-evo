@@ -12,7 +12,7 @@ import java.util.List;
 @ApplicationScoped
 public class ApplicationRepository implements PanacheMongoRepository<Application> {
 
-    private Logger logger = LoggerFactory.getLogger(ApplicationRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(ApplicationRepository.class);
 
     public ObjectId createApplication(Application application){
         ObjectId applicationId = null;
@@ -20,7 +20,7 @@ public class ApplicationRepository implements PanacheMongoRepository<Application
             persist(application);
             applicationId = application.getId();
         } catch (Exception e) {
-            logger.error("Exception in creating application with ID " + applicationId.toString() + ": " + e.getMessage());
+            logger.error("Exception in creating application: " + e.getMessage());
             e.printStackTrace();
         }
         return applicationId;
@@ -40,6 +40,18 @@ public class ApplicationRepository implements PanacheMongoRepository<Application
         return success;
     }
 
+    public boolean updateApplication(Application application){
+        boolean success = false;
+        try{
+            update(application);
+            success = true;
+        }catch (Exception e){
+            logger.error("Exception in updating application with ID " + application.getId().toString() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        return success;
+    }
+
     public boolean deleteApplication(ObjectId applicationId){
         boolean success = false;
         try{
@@ -53,12 +65,10 @@ public class ApplicationRepository implements PanacheMongoRepository<Application
     }
 
     public Application getApplicationOnMongo(ObjectId applicationId){
-        Application application = findById(applicationId);
-        return application;
+        return findById(applicationId);
     }
 
     public List<Application> getApplicationsByClientId(ObjectId clientId){
-        List<Application> applicationList = list("clientId", clientId);
-        return applicationList;
+        return list("clientId", clientId);
     }
 }

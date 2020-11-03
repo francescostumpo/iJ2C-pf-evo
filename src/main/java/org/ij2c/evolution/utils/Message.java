@@ -30,7 +30,7 @@ public class Message {
             message.setStatus("200");
             return new ResponseEntity<>(message, HttpStatus.OK);
         }else{
-            message.setMessage("Failed to operation on MongoDB");
+            message.setMessage("Failed operation on MongoDB");
             message.setStatus("500");
             return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
         }

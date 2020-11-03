@@ -27,10 +27,10 @@ public class QuestionnaireController {
     }
 
     @GetMapping("/getQuestionnaireByApplicationId/{applicationId}")
-    public ResponseEntity<Questionnaire> getQuestionnaireByApplicationId(@PathVariable ObjectId applicationId){
+    public ResponseEntity<Object> getQuestionnaireByApplicationId(@PathVariable ObjectId applicationId){
         Questionnaire questionnaire = questionnaireService.getQuestionnaireByApplicationId(applicationId);
         if(questionnaire == null){
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(new JSONObject(), HttpStatus.OK);
         }else {
             return new ResponseEntity<>(questionnaire, HttpStatus.OK);
         }
@@ -40,6 +40,12 @@ public class QuestionnaireController {
     @DeleteMapping("/deleteQuestionnaire/{questionnaireId}")
     public ResponseEntity<Message> deleteQuestionnaire(@PathVariable ObjectId questionnaireId){
         boolean success = questionnaireService.deleteQuestionnaire(questionnaireId);
+        return Message.sendMessageResponseEntity(success);
+    }
+
+    @PutMapping("/updateQuestionnaire")
+    public ResponseEntity<Message> updateQuestionnaire(@RequestBody Questionnaire questionnaire){
+        boolean success = questionnaireService.updateQuestionnaire(questionnaire);
         return Message.sendMessageResponseEntity(success);
     }
 }

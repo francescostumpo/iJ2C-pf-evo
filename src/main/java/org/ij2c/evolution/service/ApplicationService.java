@@ -41,6 +41,11 @@ public class ApplicationService {
         return success;
     }
 
+    public boolean updateApplication(Application application){
+        boolean success = applicationRepository.updateApplication(application);
+        return success;
+    }
+
     public boolean deleteApplication(ObjectId applicationId){
         Application application = applicationRepository.findById(applicationId);
         if(application == null){
@@ -67,7 +72,11 @@ public class ApplicationService {
         try{
             for(Application application: applicationList){
                 success = deleteApplication(application.getId());
+                if(success == false){
+                    return false;
+                }
             }
+            success = true;
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @ApplicationScoped
 public class ClientRepository implements PanacheMongoRepository<Client> {
@@ -50,5 +51,10 @@ public class ClientRepository implements PanacheMongoRepository<Client> {
             e.printStackTrace();
         }
         return success;
+    }
+
+    public List<Client> getAllClients() {
+        List<Client> clientList = listAll();
+        return clientList;
     }
 }

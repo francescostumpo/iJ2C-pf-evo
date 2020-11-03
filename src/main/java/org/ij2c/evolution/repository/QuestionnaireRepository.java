@@ -36,7 +36,19 @@ public class QuestionnaireRepository implements PanacheMongoRepository<Questionn
             deleteById(questionnaireId);
             success = true;
         }catch (Exception e){
-            logger.error("Exception in deleting application with ID " + questionnaireId.toString() + ": " + e.getMessage());
+            logger.error("Exception in deleting questionnaire with ID " + questionnaireId.toString() + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        return success;
+    }
+
+    public boolean updateQuestionnaire(Questionnaire questionnaire) {
+        boolean success = false;
+        try{
+            update(questionnaire);
+            success = true;
+        }catch (Exception e){
+            logger.error("Exception in updating questionnaire with ID " + questionnaire.getId().toString() + ": " + e.getMessage());
             e.printStackTrace();
         }
         return success;
