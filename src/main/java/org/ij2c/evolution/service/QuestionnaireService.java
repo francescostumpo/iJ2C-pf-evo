@@ -10,6 +10,8 @@ import org.ij2c.evolution.model.Questionnaire;
 import org.ij2c.evolution.model.support.QuestionAnswer;
 import org.ij2c.evolution.repository.QuestionRepository;
 import org.ij2c.evolution.repository.QuestionnaireRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,6 +21,7 @@ import java.util.List;
 @ApplicationScoped
 public class QuestionnaireService {
 
+    private final Logger logger = LoggerFactory.getLogger(QuestionnaireService.class);
     @Inject
     QuestionnaireRepository questionnaireRepository;
 
@@ -31,15 +34,25 @@ public class QuestionnaireService {
     public boolean createQuestionnaire(JsonObject jsonObject){
         Questionnaire questionnaire = new Questionnaire();
         String applicationId = jsonObject.getString("applicationId");
+        String questionnaireIdJson = jsonObject.getString("id");
         List<QuestionAnswer> questionAnswerList = convertJsonArrayToList(jsonObject.getJsonArray("questionAnswerList"));
         questionnaire.setQuestionAnswerList(questionAnswerList);
         questionnaire = calculateModernizationStrategy(questionnaire);
-
-        ObjectId questionnaireId = questionnaireRepository.createQuestionnaire(questionnaire);
+        if(questionnaireIdJson != null){
+            questionnaire.setId(new ObjectId(questionnaireIdJson));
+        }
+        ObjectId questionnaireId = questionnaireRepository.updateOrCreateQuestionnaire(questionnaire);
         if(questionnaireId == null){
             return false;
         }
-        boolean success = applicationService.updateApplication(new ObjectId(applicationId), questionnaireId);
+        boolean success = false;
+        try {
+            success = applicationService.updateApplication(new ObjectId(applicationId), questionnaireId);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            e.printStackTrace();
+        }
+
         return success;
     }
 
@@ -49,7 +62,11 @@ public class QuestionnaireService {
             JsonObject jo = JsonObject.mapFrom(ob);
             QuestionAnswer questionAnswer = new QuestionAnswer();
             questionAnswer.setQuestionId(jo.getString("questionId"));
-            questionAnswer.setAnswerValue(jo.getDouble("answerValue"));
+            try{
+                questionAnswer.setAnswerValue(Double.parseDouble(jo.getString("answerValue")));
+            }catch (ClassCastException e){
+                questionAnswer.setAnswerValue(jo.getDouble("answerValue"));
+            }
             questionAnswers.add(questionAnswer);
         }
         return questionAnswers;
@@ -69,7 +86,7 @@ public class QuestionnaireService {
             return "Dispose & Re-Engineer";
         }else if(resultValue >= 1.5 && resultValue < 3){
             return "Keep";
-        }else if( resultValue >=3 && resultValue < 6){
+        }else if( resultValue >=3 && resultValue < 4.25){
             return "Migrate";
         }else{
             return "Empower";

@@ -1,8 +1,10 @@
 package org.ij2c.evolution.service;
 
+import io.vertx.core.json.JsonObject;
 import org.bson.types.ObjectId;
 import org.ij2c.evolution.model.Application;
 import org.ij2c.evolution.model.Client;
+import org.ij2c.evolution.model.Question;
 import org.ij2c.evolution.repository.ApplicationRepository;
 import org.ij2c.evolution.repository.QuestionRepository;
 import org.ij2c.evolution.repository.QuestionnaireRepository;
@@ -21,12 +23,32 @@ public class ApplicationService {
     @Inject
     QuestionnaireRepository questionnaireRepository;
 
+    @Inject
+    QuestionnaireService questionnaireService;
+
+    @Inject
+    QuestionService questionService;
+
     public boolean createApplication(Application application){
 
         ObjectId applicationId = applicationRepository.createApplication(application);
         if(applicationId == null){
             return false;
         }
+        /*JsonObject questionnaire = new JsonObject();
+        questionnaire.put("applicationId", applicationId);
+        List<Question> questionList = questionService.getAllQuestionsOnMongo();
+        List<JsonObject> jsonObjectList = new ArrayList<>();
+        for(Question question: questionList){
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.put("questionId", question.getId());
+            jsonObject.put("answerValue", 1);
+            jsonObjectList.add(jsonObject);
+        }
+        questionnaire.put("questionAnswerList", jsonObjectList);
+        if(!questionnaireService.createQuestionnaire(questionnaire)){
+            return false;
+        }*/
         return true;
     }
 

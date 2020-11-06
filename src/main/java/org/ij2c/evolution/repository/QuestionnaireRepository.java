@@ -13,14 +13,18 @@ public class QuestionnaireRepository implements PanacheMongoRepository<Questionn
 
     private Logger logger = LoggerFactory.getLogger(QuestionRepository.class);
 
-    public ObjectId createQuestionnaire(Questionnaire questionnaire){
-        ObjectId questionnaireId = null;
+    public ObjectId updateOrCreateQuestionnaire(Questionnaire questionnaire){
+        ObjectId questionnaireId = questionnaire.getId();
         try{
-            persist(questionnaire);
+            if(questionnaireId == null){
+                persist(questionnaire);
+
+            }else{
+                update(questionnaire);
+            }
             questionnaireId = questionnaire.getId();
         }catch (Exception e){
             e.printStackTrace();
-
         }
         return questionnaireId;
     }
